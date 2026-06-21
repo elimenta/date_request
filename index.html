@@ -1029,7 +1029,9 @@ function restart() {
 (function() {
   const noBtn = document.getElementById('noBtn');
   const container = document.getElementById('step0');
-  noBtn.addEventListener('mouseenter', function() {
+  const FLEE_DISTANCE = 120;
+
+  function moveAway() {
     const rect = container.getBoundingClientRect();
     const btnW = noBtn.offsetWidth;
     const btnH = noBtn.offsetHeight;
@@ -1040,9 +1042,20 @@ function restart() {
     noBtn.style.position = 'absolute';
     noBtn.style.left = x + 'px';
     noBtn.style.top = y + 'px';
-    noBtn.style.transition = 'left 0.2s ease, top 0.2s ease';
+    noBtn.style.transition = 'left 0.15s ease, top 0.15s ease';
     noBtn.style.zIndex = '1';
+  }
+
+  container.addEventListener('mousemove', function(e) {
+    const btnRect = noBtn.getBoundingClientRect();
+    const btnCX = btnRect.left + btnRect.width / 2;
+    const btnCY = btnRect.top + btnRect.height / 2;
+    const dx = e.clientX - btnCX;
+    const dy = e.clientY - btnCY;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < FLEE_DISTANCE) moveAway();
   });
+
   noBtn.addEventListener('click', function(e) {
     e.preventDefault();
     goStep(1);
