@@ -437,9 +437,33 @@
       <button class="btn btn-secondary" id="noBtn" style="font-size:1.1rem;padding:14px 40px;position:absolute;top:110px;right:80px;width:104px;height:49px;white-space:nowrap;">No</button>
     </div>
 
-    <!-- STEP 1: DATES -->
+    <!-- STEP 1: CITY -->
     <div class="step" id="step1">
-      <div class="step-label">Step 1 of 4</div>
+      <div class="step-label">Step 1 of 5</div>
+      <div class="step-title">Where should we go? 📍</div>
+
+      <div class="dog-options">
+        <div class="option-card" data-val="seattle" onclick="selectCity(this)">
+          <div class="icon">🏙️</div>
+          <div class="label">Seattle</div>
+          <div class="sublabel">Emerald City vibes</div>
+        </div>
+        <div class="option-card" data-val="vancouver" onclick="selectCity(this)">
+          <div class="icon">🌲</div>
+          <div class="label">Vancouver</div>
+          <div class="sublabel">Pacific Northwest charm</div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="goStep(0)">← Back</button>
+        <button class="btn btn-primary" id="step1Next" disabled>Next →</button>
+      </div>
+    </div>
+
+    <!-- STEP 2: DATES -->
+    <div class="step" id="step2">
+      <div class="step-label">Step 2 of 5</div>
       <div class="step-title">When works for you?</div>
 
       <div class="cal-nav">
@@ -448,18 +472,17 @@
         <button id="nextMonth">&#8594;</button>
       </div>
       <div class="cal-grid" id="calGrid"></div>
-      <div class="hint" id="calHint">Select up to 3 dates</div>
-
-      <div class="time-slots" id="timeSlots"></div>
+      <div class="hint" id="calHint">Select a date</div>
 
       <div class="btn-row">
-        <button class="btn btn-primary" id="step1Next" disabled>Next →</button>
+        <button class="btn btn-secondary" onclick="goStep(1)">← Back</button>
+        <button class="btn btn-primary" id="step2Next" disabled>Next →</button>
       </div>
     </div>
 
-    <!-- STEP 2: DOG -->
-    <div class="step" id="step2">
-      <div class="step-label">Step 2 of 4</div>
+    <!-- STEP 3: DOG -->
+    <div class="step" id="step3">
+      <div class="step-label">Step 3 of 5</div>
       <div class="step-title">Should Errol bring his dog? 🐾</div>
 
       <div class="dog-options">
@@ -476,14 +499,14 @@
       </div>
 
       <div class="btn-row">
-        <button class="btn btn-secondary" onclick="goStep(1)">← Back</button>
-        <button class="btn btn-primary" id="step2Next" disabled>Next →</button>
+        <button class="btn btn-secondary" onclick="goStep(2)">← Back</button>
+        <button class="btn btn-primary" id="step3Next_dog" disabled>Next →</button>
       </div>
     </div>
 
-    <!-- STEP 3: FOOD -->
-    <div class="step" id="step3">
-      <div class="step-label">Step 3 of 4</div>
+    <!-- STEP 4: FOOD -->
+    <div class="step" id="step4">
+      <div class="step-label">Step 4 of 5</div>
       <div class="step-title">What are you feeling? 🍜</div>
       <p style="font-size:.85rem;color:var(--text-mute);margin-bottom:16px;">Pick as many as you'd like!</p>
 
@@ -510,50 +533,28 @@
       <input type="text" class="other-input" id="otherFoodInput" placeholder="What else sounds good?" />
 
       <div class="btn-row">
-        <button class="btn btn-secondary" onclick="goStep(2)">← Back</button>
-        <button class="btn btn-primary" id="step3Next" disabled onclick="goStep(4)">Next →</button>
+        <button class="btn btn-secondary" onclick="goStep(3)">← Back</button>
+        <button class="btn btn-primary" id="step4Next_food" disabled onclick="renderPlaces(); goStep(5)">Next →</button>
       </div>
     </div>
 
-    <!-- STEP 4: PLACES -->
-    <div class="step" id="step4">
-      <div class="step-label">Step 4 of 4</div>
+    <!-- STEP 5: PLACES -->
+    <div class="step" id="step5">
+      <div class="step-label">Step 5 of 5</div>
       <div class="step-title">Any places you'd love to go? 📍</div>
       <p style="font-size:.85rem;color:var(--text-mute);margin-bottom:16px;">Pick spots that sound fun, or suggest your own!</p>
 
-      <div class="places-grid" id="placesGrid">
-        <div class="food-chip" data-val="McMenamins Edgefield" onclick="togglePlace(this)"><span class="emoji">🏰</span>McMenamins Edgefield</div>
-        <div class="food-chip" data-val="Beaches Restaurant" onclick="togglePlace(this)"><span class="emoji">🍽️</span>Beaches Restaurant</div>
-        <div class="food-chip" data-val="Waterfront Park" onclick="togglePlace(this)"><span class="emoji">🌊</span>Waterfront Park</div>
-        <div class="food-chip" data-val="Esther Short Park" onclick="togglePlace(this)"><span class="emoji">🌳</span>Esther Short Park</div>
-        <div class="food-chip" data-val="Kiggins Theatre" onclick="togglePlace(this)"><span class="emoji">🎬</span>Kiggins Theatre</div>
-        <div class="food-chip" data-val="Grocery Cocktail Bar" onclick="togglePlace(this)"><span class="emoji">🍸</span>Grocery Cocktail Bar</div>
-        <div class="food-chip" data-val="Fort Vancouver" onclick="togglePlace(this)"><span class="emoji">🏛️</span>Fort Vancouver</div>
-        <div class="food-chip" data-val="Maryhill Winery" onclick="togglePlace(this)"><span class="emoji">🍷</span>Maryhill Winery</div>
-        <div class="food-chip" data-val="Kafiex Roasters" onclick="togglePlace(this)"><span class="emoji">☕</span>Kafiex Roasters</div>
-        <div class="food-chip" data-val="Lapellah" onclick="togglePlace(this)"><span class="emoji">🍲</span>Lapellah</div>
-        <div class="food-chip" data-val="Confluence Land Bridge" onclick="togglePlace(this)"><span class="emoji">🌉</span>Confluence Land Bridge</div>
-        <div class="food-chip" data-val="NomNom" onclick="togglePlace(this)"><span class="emoji">🍜</span>NomNom</div>
-        <div class="food-chip" data-val="Rally Pizza" onclick="togglePlace(this)"><span class="emoji">🍕</span>Rally Pizza</div>
-        <div class="food-chip" data-val="Shangrila Sushi" onclick="togglePlace(this)"><span class="emoji">🍣</span>Shangrila Sushi</div>
-        <div class="food-chip" data-val="Lacamas Lake Trail" onclick="togglePlace(this)"><span class="emoji">🥾</span>Lacamas Lake Trail</div>
-        <div class="food-chip" data-val="Ben & Jerry's" onclick="togglePlace(this)"><span class="emoji">🍦</span>Ben & Jerry's</div>
-        <div class="food-chip" data-val="Ilani Casino" onclick="togglePlace(this)"><span class="emoji">🎰</span>Ilani Casino</div>
-        <div class="food-chip" data-val="Burnt Bridge Creek Trail" onclick="togglePlace(this)"><span class="emoji">🚶</span>Burnt Bridge Creek Trail</div>
-        <div class="food-chip" data-val="Little Conejo" onclick="togglePlace(this)"><span class="emoji">🌮</span>Little Conejo</div>
-        <div class="food-chip" data-val="Portland Japanese Garden" onclick="togglePlace(this)"><span class="emoji">🎋</span>Portland Japanese Garden</div>
-        <div class="food-chip" data-val="Other" onclick="togglePlace(this)"><span class="emoji">✨</span>Other</div>
-      </div>
+      <div class="places-grid" id="placesGrid"></div>
       <input type="text" class="other-input" id="otherPlaceInput" placeholder="Somewhere else in mind?" />
 
       <div class="btn-row">
-        <button class="btn btn-secondary" onclick="goStep(3)">← Back</button>
-        <button class="btn btn-primary" id="step4Next" onclick="buildResult()">Send the Request 💌</button>
+        <button class="btn btn-secondary" onclick="goStep(4)">← Back</button>
+        <button class="btn btn-primary" id="step5Next" onclick="buildResult()">Send the Request 💌</button>
       </div>
     </div>
 
-    <!-- STEP 5: RESULT -->
-    <div class="step" id="step5">
+    <!-- STEP 6: RESULT -->
+    <div class="step" id="step6">
       <div class="result-section">
         <div class="confetti">🎉💌🌹</div>
         <h2>Your request is ready!</h2>
@@ -573,11 +574,12 @@
 <script>
 // ── STATE ──
 const ERROL_EMAIL = 'elimenta24@gmail.com';
-const TOTAL_STEPS = 4;
+const TOTAL_STEPS = 5;
 let currentStep = 0;
 let viewYear, viewMonth;
 let selectedDates = []; // [{date: Date, time: '19:00'}]
 let dogAnswer = null;
+let cityChoice = null;
 let foodChoices = [];
 let placeChoices = [];
 
@@ -620,7 +622,7 @@ const BLOCKED_DATES = [
 
 // ── PROGRESS ──
 function updateProgress() {
-  const pct = currentStep === 0 ? 0 : (currentStep / TOTAL_STEPS) * 100;
+  const pct = currentStep <= 1 ? 0 : ((currentStep - 1) / TOTAL_STEPS) * 100;
   document.getElementById('progressFill').style.width = pct + '%';
 }
 
@@ -633,8 +635,17 @@ function goStep(n) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-document.getElementById('step1Next').addEventListener('click', () => goStep(2));
+document.getElementById('step1Next').addEventListener('click', () => { renderCalendar(); goStep(2); });
 document.getElementById('step2Next').addEventListener('click', () => goStep(3));
+document.getElementById('step3Next_dog').addEventListener('click', () => goStep(4));
+
+// ── CITY ──
+function selectCity(el) {
+  document.querySelectorAll('#step1 .option-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  cityChoice = el.dataset.val;
+  document.getElementById('step1Next').disabled = false;
+}
 
 // ── US PUBLIC HOLIDAYS (fixed + observed) ──
 function getUSHolidays(year) {
@@ -688,7 +699,8 @@ function isBlocked(date) {
   return BLOCKED_DATES.some(b => b.toDateString() === date.toDateString());
 }
 function isAvailableDate(date) {
-  if (isBlocked(date)) return false;
+  if (cityChoice !== 'seattle' && isBlocked(date)) return false;
+  if (cityChoice === 'seattle') return true;
   const day = date.getDay();
   return day === 0 || day === 6 || isHoliday(date);
 }
@@ -750,21 +762,18 @@ function toggleDate(date, el) {
   if (idx !== -1) {
     selectedDates.splice(idx, 1);
   } else {
-    if (selectedDates.length >= 3) return;
-    selectedDates.push({ date, time: '19:00' });
+    if (selectedDates.length >= 1) return;
+    selectedDates.push({ date });
   }
   renderCalendar();
-  renderTimeSlots();
   updateCalHint();
-  document.getElementById('step1Next').disabled = selectedDates.length === 0;
+  document.getElementById('step2Next').disabled = selectedDates.length === 0;
 }
 
 function updateCalHint() {
-  const remaining = 3 - selectedDates.length;
   const hint = document.getElementById('calHint');
-  if (selectedDates.length === 0) hint.textContent = 'Select up to 3 dates';
-  else if (remaining === 0) hint.textContent = '3 dates selected ✓';
-  else hint.textContent = `${selectedDates.length} selected — you can add ${remaining} more`;
+  if (selectedDates.length === 0) hint.textContent = 'Select a date';
+  else hint.textContent = 'Date selected ✓';
 }
 
 document.getElementById('prevMonth').addEventListener('click', () => {
@@ -780,63 +789,6 @@ document.getElementById('nextMonth').addEventListener('click', () => {
   renderCalendar();
 });
 
-// ── TIME SLOTS ──
-function renderTimeSlots() {
-  const container = document.getElementById('timeSlots');
-  container.innerHTML = '';
-  if (selectedDates.length === 0) return;
-
-  selectedDates.forEach((slot, i) => {
-    const div = document.createElement('div');
-    div.className = 'time-slot-item';
-
-    const label = document.createElement('div');
-    label.className = 'date-label';
-    label.textContent = formatDate(slot.date);
-    div.appendChild(label);
-
-    const sel = document.createElement('select');
-    populateTimes(sel, slot.time);
-    sel.addEventListener('change', () => { selectedDates[i].time = sel.value; });
-    div.appendChild(sel);
-
-    const rmBtn = document.createElement('button');
-    rmBtn.className = 'remove-btn';
-    rmBtn.textContent = '✕';
-    rmBtn.title = 'Remove';
-    rmBtn.addEventListener('click', () => {
-      selectedDates.splice(i, 1);
-      renderCalendar();
-      renderTimeSlots();
-      updateCalHint();
-      document.getElementById('step1Next').disabled = selectedDates.length === 0;
-    });
-    div.appendChild(rmBtn);
-
-    container.appendChild(div);
-  });
-}
-
-function populateTimes(sel, currentVal) {
-  const hours = [];
-  for (let h = 9; h <= 22; h++) {
-    ['00','30'].forEach(m => {
-      const val = pad(h) + ':' + m;
-      const opt = document.createElement('option');
-      opt.value = val;
-      opt.textContent = formatTime(h, m);
-      if (val === currentVal) opt.selected = true;
-      sel.appendChild(opt);
-    });
-  }
-}
-
-function formatTime(h, m) {
-  const ampm = h >= 12 ? 'PM' : 'AM';
-  const h12 = h % 12 === 0 ? 12 : h % 12;
-  return h12 + ':' + m + ' ' + ampm;
-}
-
 function formatDate(d) {
   return d.toLocaleDateString('en-US', { weekday: 'short', month: 'long', day: 'numeric' });
 }
@@ -848,7 +800,7 @@ function selectDog(el) {
   document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
   el.classList.add('selected');
   dogAnswer = el.dataset.val;
-  document.getElementById('step2Next').disabled = false;
+  document.getElementById('step3Next_dog').disabled = false;
 }
 
 // ── FOOD ──
@@ -868,10 +820,52 @@ function toggleFood(el) {
     otherInput.classList.remove('visible');
     otherInput.value = '';
   }
-  document.getElementById('step3Next').disabled = foodChoices.length === 0;
+  document.getElementById('step4Next_food').disabled = foodChoices.length === 0;
 }
 
 // ── PLACES ──
+const VANCOUVER_PLACES = [
+  ['🏰','McMenamins Edgefield'],['🍽️','Beaches Restaurant'],['🌊','Waterfront Park'],
+  ['🌳','Esther Short Park'],['🎬','Kiggins Theatre'],['🍸','Grocery Cocktail Bar'],
+  ['🏛️','Fort Vancouver'],['🍷','Maryhill Winery'],['☕','Kafiex Roasters'],
+  ['🍲','Lapellah'],['🌉','Confluence Land Bridge'],['🍜','NomNom'],
+  ['🍕','Rally Pizza'],['🍣','Shangrila Sushi'],['🥾','Lacamas Lake Trail'],
+  ['🍦',"Ben & Jerry's"],['🎰','Ilani Casino'],['🚶','Burnt Bridge Creek Trail'],
+  ['🌮','Little Conejo'],['🎋','Portland Japanese Garden'],
+];
+const SEATTLE_PLACES = [
+  ['🏙️','Pike Place Market'],['🎡','Seattle Great Wheel'],['🌳','Discovery Park'],
+  ['🍣','Shiro\'s Sushi'],['☕','Storyville Coffee'],['🍸','Canon Whiskey Bar'],
+  ['🎶','Jazz Alley'],['🌊','Alki Beach'],['🍕','Serious Pie'],
+  ['🏛️','Chihuly Garden & Glass'],['🍜','Kedai Makan'],['🥾','Rattlesnake Ledge'],
+  ['🌉','Gas Works Park'],['🍦','Molly Moon\'s'],['🎬','SIFF Cinema'],
+  ['🍷','Chateau Ste. Michelle'],['🌮','Tacos Chukis'],['🍲','Ma\'ono'],
+  ['🚶','Washington Park Arboretum'],['🍔','Dick\'s Drive-In'],
+];
+
+function renderPlaces() {
+  const grid = document.getElementById('placesGrid');
+  grid.innerHTML = '';
+  placeChoices = [];
+  const list = cityChoice === 'seattle' ? SEATTLE_PLACES : VANCOUVER_PLACES;
+  list.forEach(([emoji, name]) => {
+    const chip = document.createElement('div');
+    chip.className = 'food-chip';
+    chip.dataset.val = name;
+    chip.onclick = function() { togglePlace(this); };
+    chip.innerHTML = '<span class="emoji">' + emoji + '</span>' + name;
+    grid.appendChild(chip);
+  });
+  const other = document.createElement('div');
+  other.className = 'food-chip';
+  other.dataset.val = 'Other';
+  other.onclick = function() { togglePlace(this); };
+  other.innerHTML = '<span class="emoji">✨</span>Other';
+  grid.appendChild(other);
+  document.getElementById('otherPlaceInput').classList.remove('visible');
+  document.getElementById('otherPlaceInput').value = '';
+}
+
 function togglePlace(el) {
   const val = el.dataset.val;
   if (el.classList.contains('selected')) {
@@ -890,7 +884,7 @@ function togglePlace(el) {
 
 // ── RESULT ──
 function buildResult() {
-  goStep(5);
+  goStep(6);
 
   const otherText = document.getElementById('otherFoodInput').value.trim();
   const foods = foodChoices.map(f => f === 'Other' && otherText ? otherText : f);
@@ -903,7 +897,7 @@ function buildResult() {
   // Summary box
   const box = document.getElementById('summaryBox');
   box.innerHTML = `
-    <div class="summary-row"><span class="summary-icon">📅</span><span><strong>Proposed dates:</strong><br>${selectedDates.map((s,i) => `Option ${i+1}: ${formatDate(s.date)} at ${formatTimePretty(s.time)}`).join('<br>')}</span></div>
+    <div class="summary-row"><span class="summary-icon">📅</span><span><strong>Date:</strong> ${formatDate(selectedDates[0].date)}</span></div>
     <div class="summary-row" style="margin-top:10px"><span class="summary-icon">🐾</span><span><strong>Dog?</strong> ${dogText}</span></div>
     <div class="summary-row" style="margin-top:10px"><span class="summary-icon">🍽️</span><span><strong>Food vibes:</strong> ${foods.join(', ')}</span></div>
     <div class="summary-row" style="margin-top:10px"><span class="summary-icon">📍</span><span><strong>Places:</strong> ${placesText}</span></div>
@@ -913,46 +907,32 @@ function buildResult() {
   const linksContainer = document.getElementById('calLinks');
   linksContainer.innerHTML = '';
 
-  selectedDates.forEach((slot, i) => {
-    const details = buildDetails(slot, dogText, foods, placesText);
-    const gcUrl = buildGCalUrl(slot, details);
+  const slot = selectedDates[0];
+  const details = buildDetails(slot, dogText, foods, placesText);
+  const gcUrl = buildGCalUrl(slot, details);
 
-    const wrapper = document.createElement('div');
-    wrapper.style.cssText = 'margin-bottom:12px;';
+  const btnRow = document.createElement('div');
+  btnRow.style.cssText = 'display:flex;gap:8px;';
 
-    const label = document.createElement('div');
-    label.style.cssText = 'font-size:.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-mute);margin-bottom:6px;';
-    label.textContent = 'Option ' + (i + 1) + ': ' + formatDate(slot.date) + ' · ' + formatTimePretty(slot.time);
-    wrapper.appendChild(label);
+  const gcBtn = document.createElement('a');
+  gcBtn.href = gcUrl;
+  gcBtn.target = '_blank';
+  gcBtn.rel = 'noopener noreferrer';
+  gcBtn.className = 'cal-link-btn';
+  gcBtn.style.cssText = 'flex:1;font-size:.85rem;padding:12px 16px;';
+  gcBtn.textContent = 'Google Calendar';
+  btnRow.appendChild(gcBtn);
 
-    const btnRow = document.createElement('div');
-    btnRow.style.cssText = 'display:flex;gap:8px;';
+  const icsBtn = document.createElement('button');
+  icsBtn.className = 'cal-link-btn';
+  icsBtn.style.cssText = 'flex:1;font-size:.85rem;padding:12px 16px;border:none;cursor:pointer;font-family:inherit;';
+  icsBtn.textContent = 'Download .ics';
+  icsBtn.addEventListener('click', () => downloadICS(slot, details, 0));
+  btnRow.appendChild(icsBtn);
 
-    const gcBtn = document.createElement('a');
-    gcBtn.href = gcUrl;
-    gcBtn.target = '_blank';
-    gcBtn.rel = 'noopener noreferrer';
-    gcBtn.className = 'cal-link-btn';
-    gcBtn.style.cssText = 'flex:1;font-size:.85rem;padding:12px 16px;';
-    gcBtn.textContent = 'Google Calendar';
-    btnRow.appendChild(gcBtn);
-
-    const icsBtn = document.createElement('button');
-    icsBtn.className = 'cal-link-btn';
-    icsBtn.style.cssText = 'flex:1;font-size:.85rem;padding:12px 16px;border:none;cursor:pointer;font-family:inherit;';
-    icsBtn.textContent = 'Download .ics';
-    icsBtn.addEventListener('click', () => downloadICS(slot, details, i));
-    btnRow.appendChild(icsBtn);
-
-    wrapper.appendChild(btnRow);
-    linksContainer.appendChild(wrapper);
-  });
+  linksContainer.appendChild(btnRow);
 }
 
-function formatTimePretty(t) {
-  const [h, m] = t.split(':').map(Number);
-  return formatTime(h, pad(m));
-}
 
 function buildDetails(slot, dog, foods, places) {
   const from = GUEST_NAME ? `from ${GUEST_NAME}` : '';
@@ -961,35 +941,15 @@ function buildDetails(slot, dog, foods, places) {
 }
 
 function buildGCalUrl(slot, details) {
-  // Build start and end datetime strings (local time, YYYYMMDDTHHMMSS)
   const d = slot.date;
-  const [startH, startM] = slot.time.split(':').map(Number);
-  const endH = startH + 2; // 2-hour date
-
-  const startStr = [
-    d.getFullYear(),
-    pad(d.getMonth() + 1),
-    pad(d.getDate()),
-    'T',
-    pad(startH),
-    pad(startM),
-    '00'
-  ].join('');
-
-  const endStr = [
-    d.getFullYear(),
-    pad(d.getMonth() + 1),
-    pad(d.getDate()),
-    'T',
-    pad(endH),
-    pad(startM),
-    '00'
-  ].join('');
+  const dateStr = [d.getFullYear(), pad(d.getMonth() + 1), pad(d.getDate())].join('');
+  const nextDay = new Date(d); nextDay.setDate(nextDay.getDate() + 1);
+  const endStr = [nextDay.getFullYear(), pad(nextDay.getMonth() + 1), pad(nextDay.getDate())].join('');
 
   const params = new URLSearchParams({
     action: 'TEMPLATE',
     text: DATE_NUMBER ? `💌 Date #${DATE_NUMBER} with Errol` : '💌 Date with Errol',
-    dates: startStr + '/' + endStr,
+    dates: dateStr + '/' + endStr,
     details: details,
     add: ERROL_EMAIL,
   });
@@ -999,9 +959,9 @@ function buildGCalUrl(slot, details) {
 
 function buildICS(slot, details) {
   const d = slot.date;
-  const [startH, startM] = slot.time.split(':').map(Number);
-  const endH = startH + 2;
-  const ts = (h, m) => [d.getFullYear(), pad(d.getMonth()+1), pad(d.getDate()), 'T', pad(h), pad(m), '00'].join('');
+  const dateStr = [d.getFullYear(), pad(d.getMonth()+1), pad(d.getDate())].join('');
+  const nextDay = new Date(d); nextDay.setDate(nextDay.getDate() + 1);
+  const endStr = [nextDay.getFullYear(), pad(nextDay.getMonth()+1), pad(nextDay.getDate())].join('');
   const now = new Date();
   const stamp = [now.getUTCFullYear(), pad(now.getUTCMonth()+1), pad(now.getUTCDate()), 'T', pad(now.getUTCHours()), pad(now.getUTCMinutes()), pad(now.getUTCSeconds()), 'Z'].join('');
   const title = DATE_NUMBER ? `Date #${DATE_NUMBER} with Errol` : 'Date with Errol';
@@ -1011,8 +971,8 @@ function buildICS(slot, details) {
     'VERSION:2.0',
     'PRODID:-//DateRequest//EN',
     'BEGIN:VEVENT',
-    'DTSTART:' + ts(startH, startM),
-    'DTEND:' + ts(endH, startM),
+    'DTSTART;VALUE=DATE:' + dateStr,
+    'DTEND;VALUE=DATE:' + endStr,
     'DTSTAMP:' + stamp,
     'UID:' + stamp + '-' + Math.random().toString(36).slice(2) + '@daterequest',
     'SUMMARY:' + title,
@@ -1030,7 +990,7 @@ function downloadICS(slot, details, i) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'date-with-errol-option-' + (i+1) + '.ics';
+  a.download = 'date-with-errol.ics';
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -1041,6 +1001,7 @@ function downloadICS(slot, details, i) {
 function restart() {
   selectedDates = [];
   dogAnswer = null;
+  cityChoice = null;
   foodChoices = [];
   placeChoices = [];
   document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
@@ -1049,11 +1010,11 @@ function restart() {
   document.getElementById('otherFoodInput').value = '';
   document.getElementById('otherPlaceInput').classList.remove('visible');
   document.getElementById('otherPlaceInput').value = '';
-  document.getElementById('step2Next').disabled = true;
-  document.getElementById('step3Next').disabled = true;
   document.getElementById('step1Next').disabled = true;
+  document.getElementById('step2Next').disabled = true;
+  document.getElementById('step3Next_dog').disabled = true;
+  document.getElementById('step4Next_food').disabled = true;
   renderCalendar();
-  renderTimeSlots();
   updateCalHint();
 
   const now = new Date();
