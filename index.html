@@ -284,6 +284,16 @@
     .food-chip .emoji { margin-right: 5px; }
 
     /* ── OTHER INPUT ── */
+    .places-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 4px;
+      max-height: 320px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
     .other-input {
       margin-top: 14px;
       width: 100%;
@@ -418,9 +428,18 @@
 
   <div class="body">
 
+    <!-- STEP 0: ASK -->
+    <div class="step active" id="step0" style="position:relative;min-height:220px;overflow:hidden;">
+      <div class="step-title" style="text-align:center;font-size:1.6rem;margin-bottom:40px;">Will you go out on a date with me?</div>
+      <div style="position:relative;min-height:60px;display:flex;justify-content:center;align-items:flex-start;">
+        <button class="btn btn-primary" style="font-size:1.1rem;padding:14px 40px;z-index:2;flex:none;" onclick="goStep(1)">Yes!</button>
+      </div>
+      <button class="btn btn-secondary" id="noBtn" style="font-size:1.1rem;padding:14px 40px;position:absolute;top:110px;right:80px;width:104px;height:49px;white-space:nowrap;">No</button>
+    </div>
+
     <!-- STEP 1: DATES -->
-    <div class="step active" id="step1">
-      <div class="step-label">Step 1 of 3</div>
+    <div class="step" id="step1">
+      <div class="step-label">Step 1 of 4</div>
       <div class="step-title">When works for you?</div>
 
       <div class="cal-nav">
@@ -440,7 +459,7 @@
 
     <!-- STEP 2: DOG -->
     <div class="step" id="step2">
-      <div class="step-label">Step 2 of 3</div>
+      <div class="step-label">Step 2 of 4</div>
       <div class="step-title">Should Errol bring his dog? 🐾</div>
 
       <div class="dog-options">
@@ -464,29 +483,77 @@
 
     <!-- STEP 3: FOOD -->
     <div class="step" id="step3">
-      <div class="step-label">Step 3 of 3</div>
+      <div class="step-label">Step 3 of 4</div>
       <div class="step-title">What are you feeling? 🍜</div>
       <p style="font-size:.85rem;color:var(--text-mute);margin-bottom:16px;">Pick as many as you'd like!</p>
 
       <div class="food-grid">
-        <div class="food-chip" data-val="Sushi" onclick="toggleFood(this)"><span class="emoji">🍣</span>Sushi</div>
+        <div class="food-chip" data-val="Sushi" onclick="toggleFood(this)"><span class="emoji">🍣</span>Sushi<span style="display:block;font-size:.7rem;font-weight:400;color:var(--text-mute);margin-top:2px;">Always a right choice</span></div>
         <div class="food-chip" data-val="Chinese Food" onclick="toggleFood(this)"><span class="emoji">🥡</span>Chinese Food</div>
         <div class="food-chip" data-val="Dessert" onclick="toggleFood(this)"><span class="emoji">🍰</span>Dessert</div>
         <div class="food-chip" data-val="Boba" onclick="toggleFood(this)"><span class="emoji">🧋</span>Boba</div>
         <div class="food-chip" data-val="Thai" onclick="toggleFood(this)"><span class="emoji">🍜</span>Thai</div>
         <div class="food-chip" data-val="French" onclick="toggleFood(this)"><span class="emoji">🥐</span>French</div>
+        <div class="food-chip" data-val="Korean BBQ" onclick="toggleFood(this)"><span class="emoji">🥩</span>Korean BBQ</div>
+        <div class="food-chip" data-val="Pizza" onclick="toggleFood(this)"><span class="emoji">🍕</span>Pizza</div>
+        <div class="food-chip" data-val="Mexican" onclick="toggleFood(this)"><span class="emoji">🌮</span>Mexican</div>
+        <div class="food-chip" data-val="Italian" onclick="toggleFood(this)"><span class="emoji">🍝</span>Italian</div>
+        <div class="food-chip" data-val="Indian" onclick="toggleFood(this)"><span class="emoji">🍛</span>Indian</div>
+        <div class="food-chip" data-val="Burgers" onclick="toggleFood(this)"><span class="emoji">🍔</span>Burgers</div>
+        <div class="food-chip" data-val="Seafood" onclick="toggleFood(this)"><span class="emoji">🦞</span>Seafood</div>
+        <div class="food-chip" data-val="Ramen" onclick="toggleFood(this)"><span class="emoji">🍜</span>Ramen</div>
+        <div class="food-chip" data-val="Vietnamese" onclick="toggleFood(this)"><span class="emoji">🍲</span>Vietnamese</div>
+        <div class="food-chip" data-val="Ice Cream" onclick="toggleFood(this)"><span class="emoji">🍦</span>Ice Cream</div>
+        <div class="food-chip" data-val="Brunch" onclick="toggleFood(this)"><span class="emoji">🥞</span>Brunch</div>
         <div class="food-chip" data-val="Other" onclick="toggleFood(this)"><span class="emoji">✨</span>Other</div>
       </div>
       <input type="text" class="other-input" id="otherFoodInput" placeholder="What else sounds good?" />
 
       <div class="btn-row">
         <button class="btn btn-secondary" onclick="goStep(2)">← Back</button>
-        <button class="btn btn-primary" id="step3Next" disabled onclick="buildResult()">Send the Request 💌</button>
+        <button class="btn btn-primary" id="step3Next" disabled onclick="goStep(4)">Next →</button>
       </div>
     </div>
 
-    <!-- STEP 4: RESULT -->
+    <!-- STEP 4: PLACES -->
     <div class="step" id="step4">
+      <div class="step-label">Step 4 of 4</div>
+      <div class="step-title">Any places you'd love to go? 📍</div>
+      <p style="font-size:.85rem;color:var(--text-mute);margin-bottom:16px;">Pick spots that sound fun, or suggest your own!</p>
+
+      <div class="places-grid" id="placesGrid">
+        <div class="food-chip" data-val="McMenamins Edgefield" onclick="togglePlace(this)"><span class="emoji">🏰</span>McMenamins Edgefield</div>
+        <div class="food-chip" data-val="Beaches Restaurant" onclick="togglePlace(this)"><span class="emoji">🍽️</span>Beaches Restaurant</div>
+        <div class="food-chip" data-val="Waterfront Park" onclick="togglePlace(this)"><span class="emoji">🌊</span>Waterfront Park</div>
+        <div class="food-chip" data-val="Esther Short Park" onclick="togglePlace(this)"><span class="emoji">🌳</span>Esther Short Park</div>
+        <div class="food-chip" data-val="Kiggins Theatre" onclick="togglePlace(this)"><span class="emoji">🎬</span>Kiggins Theatre</div>
+        <div class="food-chip" data-val="Grocery Cocktail Bar" onclick="togglePlace(this)"><span class="emoji">🍸</span>Grocery Cocktail Bar</div>
+        <div class="food-chip" data-val="Fort Vancouver" onclick="togglePlace(this)"><span class="emoji">🏛️</span>Fort Vancouver</div>
+        <div class="food-chip" data-val="Maryhill Winery" onclick="togglePlace(this)"><span class="emoji">🍷</span>Maryhill Winery</div>
+        <div class="food-chip" data-val="Kafiex Roasters" onclick="togglePlace(this)"><span class="emoji">☕</span>Kafiex Roasters</div>
+        <div class="food-chip" data-val="Lapellah" onclick="togglePlace(this)"><span class="emoji">🍲</span>Lapellah</div>
+        <div class="food-chip" data-val="Confluence Land Bridge" onclick="togglePlace(this)"><span class="emoji">🌉</span>Confluence Land Bridge</div>
+        <div class="food-chip" data-val="NomNom" onclick="togglePlace(this)"><span class="emoji">🍜</span>NomNom</div>
+        <div class="food-chip" data-val="Rally Pizza" onclick="togglePlace(this)"><span class="emoji">🍕</span>Rally Pizza</div>
+        <div class="food-chip" data-val="Shangrila Sushi" onclick="togglePlace(this)"><span class="emoji">🍣</span>Shangrila Sushi</div>
+        <div class="food-chip" data-val="Lacamas Lake Trail" onclick="togglePlace(this)"><span class="emoji">🥾</span>Lacamas Lake Trail</div>
+        <div class="food-chip" data-val="Ben & Jerry's" onclick="togglePlace(this)"><span class="emoji">🍦</span>Ben & Jerry's</div>
+        <div class="food-chip" data-val="Ilani Casino" onclick="togglePlace(this)"><span class="emoji">🎰</span>Ilani Casino</div>
+        <div class="food-chip" data-val="Burnt Bridge Creek Trail" onclick="togglePlace(this)"><span class="emoji">🚶</span>Burnt Bridge Creek Trail</div>
+        <div class="food-chip" data-val="Little Conejo" onclick="togglePlace(this)"><span class="emoji">🌮</span>Little Conejo</div>
+        <div class="food-chip" data-val="Portland Japanese Garden" onclick="togglePlace(this)"><span class="emoji">🎋</span>Portland Japanese Garden</div>
+        <div class="food-chip" data-val="Other" onclick="togglePlace(this)"><span class="emoji">✨</span>Other</div>
+      </div>
+      <input type="text" class="other-input" id="otherPlaceInput" placeholder="Somewhere else in mind?" />
+
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="goStep(3)">← Back</button>
+        <button class="btn btn-primary" id="step4Next" onclick="buildResult()">Send the Request 💌</button>
+      </div>
+    </div>
+
+    <!-- STEP 5: RESULT -->
+    <div class="step" id="step5">
       <div class="result-section">
         <div class="confetti">🎉💌🌹</div>
         <h2>Your request is ready!</h2>
@@ -506,12 +573,20 @@
 <script>
 // ── STATE ──
 const ERROL_EMAIL = 'elimenta24@gmail.com';
-const TOTAL_STEPS = 3;
-let currentStep = 1;
+const TOTAL_STEPS = 4;
+let currentStep = 0;
 let viewYear, viewMonth;
 let selectedDates = []; // [{date: Date, time: '19:00'}]
 let dogAnswer = null;
 let foodChoices = [];
+let placeChoices = [];
+
+// ── CALENDAR CONSTANTS ──
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DAYS   = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+const BLOCKED_DATES = [
+  new Date(2026, 5, 26), new Date(2026, 5, 27), new Date(2026, 5, 28),
+];
 
 // ── INIT ──
 (function() {
@@ -545,7 +620,7 @@ let foodChoices = [];
 
 // ── PROGRESS ──
 function updateProgress() {
-  const pct = (currentStep / TOTAL_STEPS) * 100;
+  const pct = currentStep === 0 ? 0 : (currentStep / TOTAL_STEPS) * 100;
   document.getElementById('progressFill').style.width = pct + '%';
 }
 
@@ -561,9 +636,64 @@ function goStep(n) {
 document.getElementById('step1Next').addEventListener('click', () => goStep(2));
 document.getElementById('step2Next').addEventListener('click', () => goStep(3));
 
+// ── US PUBLIC HOLIDAYS (fixed + observed) ──
+function getUSHolidays(year) {
+  const holidays = [];
+  holidays.push(new Date(year, 0, 1));   // New Year's Day
+  holidays.push(new Date(year, 6, 4));   // Independence Day
+  holidays.push(new Date(year, 11, 25)); // Christmas
+  // MLK Day: 3rd Monday of January
+  holidays.push(nthWeekday(year, 0, 1, 3));
+  // Presidents' Day: 3rd Monday of February
+  holidays.push(nthWeekday(year, 1, 1, 3));
+  // Memorial Day: last Monday of May
+  holidays.push(lastWeekday(year, 4, 1));
+  // Labor Day: 1st Monday of September
+  holidays.push(nthWeekday(year, 8, 1, 1));
+  // Columbus Day: 2nd Monday of October
+  holidays.push(nthWeekday(year, 9, 1, 2));
+  // Veterans Day
+  holidays.push(new Date(year, 10, 11));
+  // Thanksgiving: 4th Thursday of November
+  holidays.push(nthWeekday(year, 10, 4, 4));
+  // Day after Thanksgiving
+  const tg = nthWeekday(year, 10, 4, 4);
+  holidays.push(new Date(year, 10, tg.getDate() + 1));
+  // Juneteenth
+  holidays.push(new Date(year, 5, 19));
+  // July 3 (observed)
+  holidays.push(new Date(year, 6, 3));
+  // Dec 24 (Christmas Eve, commonly observed)
+  holidays.push(new Date(year, 11, 24));
+  // Dec 31 (New Year's Eve)
+  holidays.push(new Date(year, 11, 31));
+  return holidays;
+}
+function nthWeekday(year, month, weekday, n) {
+  const first = new Date(year, month, 1);
+  let day = 1 + ((weekday - first.getDay() + 7) % 7);
+  day += (n - 1) * 7;
+  return new Date(year, month, day);
+}
+function lastWeekday(year, month, weekday) {
+  const last = new Date(year, month + 1, 0);
+  let day = last.getDate() - ((last.getDay() - weekday + 7) % 7);
+  return new Date(year, month, day);
+}
+function isHoliday(date) {
+  const holidays = getUSHolidays(date.getFullYear());
+  return holidays.some(h => h.toDateString() === date.toDateString());
+}
+function isBlocked(date) {
+  return BLOCKED_DATES.some(b => b.toDateString() === date.toDateString());
+}
+function isAvailableDate(date) {
+  if (isBlocked(date)) return false;
+  const day = date.getDay();
+  return day === 0 || day === 6 || isHoliday(date);
+}
+
 // ── CALENDAR ──
-const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-const DAYS   = ['Su','Mo','Tu','We','Th','Fr','Sa'];
 
 function renderCalendar() {
   const now = new Date();
@@ -596,10 +726,11 @@ function renderCalendar() {
     el.className = 'cal-day';
     el.textContent = d;
 
-    if (date < now) {
+    if (date < now || !isAvailableDate(date)) {
       el.classList.add('past');
     } else {
       if (date.toDateString() === now.toDateString()) el.classList.add('today');
+      if (isHoliday(date)) el.title = 'Holiday';
       const idx = selectedDates.findIndex(s => s.date.toDateString() === date.toDateString());
       if (idx !== -1) {
         el.classList.add('selected');
@@ -740,13 +871,34 @@ function toggleFood(el) {
   document.getElementById('step3Next').disabled = foodChoices.length === 0;
 }
 
+// ── PLACES ──
+function togglePlace(el) {
+  const val = el.dataset.val;
+  if (el.classList.contains('selected')) {
+    el.classList.remove('selected');
+    placeChoices = placeChoices.filter(p => p !== val);
+  } else {
+    el.classList.add('selected');
+    placeChoices.push(val);
+  }
+  const otherInput = document.getElementById('otherPlaceInput');
+  if (val === 'Other') {
+    otherInput.classList.toggle('visible', placeChoices.includes('Other'));
+    if (!placeChoices.includes('Other')) otherInput.value = '';
+  }
+}
+
 // ── RESULT ──
 function buildResult() {
-  goStep(4);
+  goStep(5);
 
   const otherText = document.getElementById('otherFoodInput').value.trim();
   const foods = foodChoices.map(f => f === 'Other' && otherText ? otherText : f);
   const dogText = dogAnswer === 'yes' ? 'Yes, bring the pup! 🐶' : 'Just you two 🥂';
+  const otherPlaceText = document.getElementById('otherPlaceInput').value.trim();
+  const places = [...placeChoices];
+  if (otherPlaceText) places.push(otherPlaceText);
+  const placesText = places.length > 0 ? places.join(', ') : 'No preference — surprise me!';
 
   // Summary box
   const box = document.getElementById('summaryBox');
@@ -754,6 +906,7 @@ function buildResult() {
     <div class="summary-row"><span class="summary-icon">📅</span><span><strong>Proposed dates:</strong><br>${selectedDates.map((s,i) => `Option ${i+1}: ${formatDate(s.date)} at ${formatTimePretty(s.time)}`).join('<br>')}</span></div>
     <div class="summary-row" style="margin-top:10px"><span class="summary-icon">🐾</span><span><strong>Dog?</strong> ${dogText}</span></div>
     <div class="summary-row" style="margin-top:10px"><span class="summary-icon">🍽️</span><span><strong>Food vibes:</strong> ${foods.join(', ')}</span></div>
+    <div class="summary-row" style="margin-top:10px"><span class="summary-icon">📍</span><span><strong>Places:</strong> ${placesText}</span></div>
   `;
 
   // Calendar links
@@ -761,7 +914,7 @@ function buildResult() {
   linksContainer.innerHTML = '';
 
   selectedDates.forEach((slot, i) => {
-    const details = buildDetails(slot, dogText, foods);
+    const details = buildDetails(slot, dogText, foods, placesText);
     const gcUrl = buildGCalUrl(slot, details);
     const a = document.createElement('a');
     a.href = gcUrl;
@@ -778,10 +931,10 @@ function formatTimePretty(t) {
   return formatTime(h, pad(m));
 }
 
-function buildDetails(slot, dog, foods) {
+function buildDetails(slot, dog, foods, places) {
   const from = GUEST_NAME ? `from ${GUEST_NAME}` : '';
   const dateRef = DATE_NUMBER ? ` #${DATE_NUMBER}` : '';
-  return `Hi Errol! 💌\n\nDate request${dateRef}${from ? ' ' + from : ''}.\n\n🍽️ Food I'm thinking: ${foods.join(', ')}\n🐾 Dog: ${dog}\n\nLet me know if this works for you! 🌹`;
+  return `Hi Errol! 💌\n\nDate request${dateRef}${from ? ' ' + from : ''}.\n\n🍽️ Food I'm thinking: ${foods.join(', ')}\n📍 Places: ${places}\n🐾 Dog: ${dog}\n\nLet me know if this works for you! 🌹`;
 }
 
 function buildGCalUrl(slot, details) {
@@ -826,10 +979,13 @@ function restart() {
   selectedDates = [];
   dogAnswer = null;
   foodChoices = [];
+  placeChoices = [];
   document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
   document.querySelectorAll('.food-chip').forEach(c => c.classList.remove('selected'));
   document.getElementById('otherFoodInput').classList.remove('visible');
   document.getElementById('otherFoodInput').value = '';
+  document.getElementById('otherPlaceInput').classList.remove('visible');
+  document.getElementById('otherPlaceInput').value = '';
   document.getElementById('step2Next').disabled = true;
   document.getElementById('step3Next').disabled = true;
   document.getElementById('step1Next').disabled = true;
@@ -842,8 +998,32 @@ function restart() {
   viewMonth = now.getMonth();
   renderCalendar();
 
-  goStep(1);
+  goStep(0);
 }
+
+// ── RUNAWAY NO BUTTON ──
+(function() {
+  const noBtn = document.getElementById('noBtn');
+  const container = document.getElementById('step0');
+  noBtn.addEventListener('mouseenter', function() {
+    const rect = container.getBoundingClientRect();
+    const btnW = noBtn.offsetWidth;
+    const btnH = noBtn.offsetHeight;
+    const maxX = rect.width - btnW - 10;
+    const maxY = rect.height - btnH - 10;
+    const x = Math.max(5, Math.random() * maxX);
+    const y = Math.max(5, Math.random() * maxY);
+    noBtn.style.position = 'absolute';
+    noBtn.style.left = x + 'px';
+    noBtn.style.top = y + 'px';
+    noBtn.style.transition = 'left 0.2s ease, top 0.2s ease';
+    noBtn.style.zIndex = '1';
+  });
+  noBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    goStep(1);
+  });
+})();
 </script>
 </body>
 </html>
