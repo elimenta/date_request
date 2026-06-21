@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Request a Date with Errol 💌</title>
+  <script>
+    // Read URL params early so they're available before DOM renders
+    const _params = new URLSearchParams(window.location.search);
+    const GUEST_NAME  = _params.get('name') || '';
+    const DATE_NUMBER = _params.get('date') || '';
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lato:wght@300;400;700&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --rose:      #d4808a;
+      --rose-lt:   #f7dde0;
+      --rose-dk:   #b05a66;
+      --blush:     #fdf0f1;
+      --text:      #3d2025;
+      --text-mute: #8c6468;
+      --border:    #ecc8cc;
+      --white:     #ffffff;
+      --green:     #5a9e7c;
+      --green-lt:  #d8f0e4;
+    }
+
+    body {
+      font-family: 'Lato', sans-serif;
+      background: var(--blush);
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 40px 16px 60px;
+    }
+
+    .card {
+      background: var(--white);
+      border-radius: 20px;
+      box-shadow: 0 8px 40px rgba(180,80,100,0.12);
+      max-width: 580px;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      background: linear-gradient(135deg, var(--rose-dk) 0%, var(--rose) 100%);
+      padding: 36px 36px 28px;
+      text-align: center;
+      color: var(--white);
+      position: relative;
+    }
+    .header .petals {
+      font-size: 26px;
+      letter-spacing: 6px;
+      opacity: .7;
+      margin-bottom: 8px;
+    }
+    .header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.5rem, 5vw, 2rem);
+      font-weight: 600;
+      letter-spacing: .5px;
+    }
+    .header p {
+      font-size: .9rem;
+      opacity: .85;
+      margin-top: 6px;
+      font-weight: 300;
+    }
+
+    /* ── PROGRESS ── */
+    .progress-bar {
+      display: flex;
+      background: var(--rose-lt);
+      height: 4px;
+    }
+    .progress-fill {
+      background: var(--rose);
+      height: 4px;
+      transition: width .4s ease;
+    }
+
+    /* ── BODY ── */
+    .body {
+      padding: 32px 36px 36px;
+    }
+
+    .step { display: none; }
+    .step.active { display: block; }
+
+    /* step label */
+    .step-label {
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--rose);
+      margin-bottom: 6px;
+    }
+    .step-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.35rem;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+
+    /* ── CALENDAR ── */
+    .cal-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .cal-nav button {
+      background: none;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      width: 34px; height: 34px;
+      cursor: pointer;
+      font-size: 1rem;
+      color: var(--rose-dk);
+      transition: background .2s;
+    }
+    .cal-nav button:hover { background: var(--rose-lt); }
+    .cal-month {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      color: var(--text);
+    }
+
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 3px;
+    }
+    .cal-day-name {
+      text-align: center;
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .8px;
+      text-transform: uppercase;
+      color: var(--text-mute);
+      padding: 4px 0 8px;
+    }
+    .cal-day {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      font-size: .88rem;
+      cursor: pointer;
+      color: var(--text);
+      transition: background .15s, color .15s;
+      user-select: none;
+      position: relative;
+    }
+    .cal-day:hover:not(.empty):not(.past):not(.selected) {
+      background: var(--rose-lt);
+    }
+    .cal-day.empty { cursor: default; }
+    .cal-day.past { color: #d0b0b3; cursor: not-allowed; }
+    .cal-day.today {
+      font-weight: 700;
+      color: var(--rose-dk);
+    }
+    .cal-day.selected {
+      background: var(--rose);
+      color: var(--white);
+      font-weight: 700;
+    }
+    .cal-day.selected .badge {
+      position: absolute;
+      top: -3px; right: -3px;
+      background: var(--rose-dk);
+      color: white;
+      font-size: .55rem;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700;
+    }
+
+    .hint {
+      font-size: .8rem;
+      color: var(--text-mute);
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    /* ── TIME SLOTS ── */
+    .time-slots {
+      margin-top: 22px;
+    }
+    .time-slot-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--blush);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin-bottom: 10px;
+    }
+    .time-slot-item .date-label {
+      flex: 1;
+      font-size: .9rem;
+      color: var(--text);
+      font-weight: 600;
+    }
+    .time-slot-item select {
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: .85rem;
+      color: var(--text);
+      background: white;
+      cursor: pointer;
+      outline: none;
+    }
+    .time-slot-item .remove-btn {
+      background: none;
+      border: none;
+      font-size: 1.1rem;
+      cursor: pointer;
+      color: var(--rose);
+      padding: 2px 6px;
+      border-radius: 6px;
+      transition: background .15s;
+    }
+    .time-slot-item .remove-btn:hover { background: var(--rose-lt); }
+
+    /* ── DOG QUESTION ── */
+    .dog-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 4px;
+    }
+    .option-card {
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 22px 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color .2s, background .2s, transform .15s;
+    }
+    .option-card:hover { border-color: var(--rose); background: var(--rose-lt); transform: translateY(-2px); }
+    .option-card.selected { border-color: var(--rose); background: var(--rose-lt); }
+    .option-card .icon { font-size: 2.4rem; margin-bottom: 10px; }
+    .option-card .label { font-weight: 700; font-size: .95rem; color: var(--text); }
+    .option-card .sublabel { font-size: .8rem; color: var(--text-mute); margin-top: 3px; }
+
+    /* ── FOOD SELECTION ── */
+    .food-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    .food-chip {
+      border: 2px solid var(--border);
+      border-radius: 100px;
+      padding: 9px 18px;
+      font-size: .88rem;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      transition: all .2s;
+      user-select: none;
+    }
+    .food-chip:hover { border-color: var(--rose); background: var(--rose-lt); }
+    .food-chip.selected {
+      border-color: var(--rose);
+      background: var(--rose);
+      color: white;
+    }
+    .food-chip .emoji { margin-right: 5px; }
+
+    /* ── OTHER INPUT ── */
+    .other-input {
+      margin-top: 14px;
+      width: 100%;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: .9rem;
+      font-family: 'Lato', sans-serif;
+      color: var(--text);
+      outline: none;
+      transition: border-color .2s;
+      display: none;
+    }
+    .other-input:focus { border-color: var(--rose); }
+    .other-input.visible { display: block; }
+
+    /* ── BUTTONS ── */
+    .btn-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 28px;
+      gap: 12px;
+    }
+    .btn {
+      border: none;
+      border-radius: 100px;
+      padding: 12px 28px;
+      font-size: .95rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: 'Lato', sans-serif;
+      transition: opacity .2s, transform .15s;
+    }
+    .btn:active { transform: scale(.97); }
+    .btn-primary {
+      background: var(--rose);
+      color: white;
+      flex: 1;
+    }
+    .btn-primary:hover { background: var(--rose-dk); }
+    .btn-primary:disabled { opacity: .45; cursor: not-allowed; }
+    .btn-secondary {
+      background: var(--rose-lt);
+      color: var(--rose-dk);
+    }
+    .btn-secondary:hover { background: var(--border); }
+
+    /* ── RESULT ── */
+    .result-section { text-align: center; }
+    .result-section .confetti { font-size: 2.5rem; margin-bottom: 12px; }
+    .result-section h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .result-section p {
+      font-size: .9rem;
+      color: var(--text-mute);
+      margin-bottom: 28px;
+    }
+
+    .summary-box {
+      background: var(--blush);
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      text-align: left;
+      margin-bottom: 24px;
+      font-size: .88rem;
+      color: var(--text);
+      line-height: 1.7;
+    }
+    .summary-box .summary-row { display: flex; gap: 10px; margin-bottom: 6px; }
+    .summary-box .summary-row:last-child { margin-bottom: 0; }
+    .summary-box .summary-icon { flex-shrink: 0; }
+    .summary-box strong { font-weight: 700; }
+
+    .cal-links { display: flex; flex-direction: column; gap: 10px; }
+    .cal-link-btn {
+      display: block;
+      background: linear-gradient(135deg, var(--rose-dk), var(--rose));
+      color: white;
+      text-decoration: none;
+      border-radius: 12px;
+      padding: 14px 20px;
+      font-weight: 700;
+      font-size: .9rem;
+      transition: opacity .2s, transform .15s;
+      text-align: center;
+    }
+    .cal-link-btn:hover { opacity: .88; transform: translateY(-1px); }
+    .cal-link-btn .option-num {
+      font-size: .72rem;
+      font-weight: 400;
+      opacity: .8;
+      display: block;
+      margin-bottom: 2px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .restart-btn {
+      margin-top: 20px;
+      background: none;
+      border: none;
+      font-size: .82rem;
+      color: var(--text-mute);
+      cursor: pointer;
+      text-decoration: underline;
+      font-family: 'Lato', sans-serif;
+    }
+
+    /* responsive */
+    @media (max-width: 480px) {
+      .body { padding: 24px 20px 28px; }
+      .header { padding: 28px 20px 22px; }
+      .dog-options { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div class="header">
+    <div class="petals">🌹 💌 🌹</div>
+    <h1 id="headerTitle">Request a Date with Errol</h1>
+    <p id="headerSub">Fill this out and he'll get a calendar invite ✨</p>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+  <div class="body">
+
+    <!-- STEP 1: DATES -->
+    <div class="step active" id="step1">
+      <div class="step-label">Step 1 of 3</div>
+      <div class="step-title">When works for you?</div>
+
+      <div class="cal-nav">
+        <button id="prevMonth">&#8592;</button>
+        <div class="cal-month" id="calMonth"></div>
+        <button id="nextMonth">&#8594;</button>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+      <div class="hint" id="calHint">Select up to 3 dates</div>
+
+      <div class="time-slots" id="timeSlots"></div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" id="step1Next" disabled>Next →</button>
+      </div>
+    </div>
+
+    <!-- STEP 2: DOG -->
+    <div class="step" id="step2">
+      <div class="step-label">Step 2 of 3</div>
+      <div class="step-title">Should Errol bring his dog? 🐾</div>
+
+      <div class="dog-options">
+        <div class="option-card" data-val="yes" onclick="selectDog(this)">
+          <div class="icon">🐶</div>
+          <div class="label">Yes please!</div>
+          <div class="sublabel">The more the merrier</div>
+        </div>
+        <div class="option-card" data-val="no" onclick="selectDog(this)">
+          <div class="icon">🙅</div>
+          <div class="label">Just you two</div>
+          <div class="sublabel">A cozy date for two</div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="goStep(1)">← Back</button>
+        <button class="btn btn-primary" id="step2Next" disabled>Next →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: FOOD -->
+    <div class="step" id="step3">
+      <div class="step-label">Step 3 of 3</div>
+      <div class="step-title">What are you feeling? 🍜</div>
+      <p style="font-size:.85rem;color:var(--text-mute);margin-bottom:16px;">Pick as many as you'd like!</p>
+
+      <div class="food-grid">
+        <div class="food-chip" data-val="Sushi" onclick="toggleFood(this)"><span class="emoji">🍣</span>Sushi</div>
+        <div class="food-chip" data-val="Chinese Food" onclick="toggleFood(this)"><span class="emoji">🥡</span>Chinese Food</div>
+        <div class="food-chip" data-val="Dessert" onclick="toggleFood(this)"><span class="emoji">🍰</span>Dessert</div>
+        <div class="food-chip" data-val="Boba" onclick="toggleFood(this)"><span class="emoji">🧋</span>Boba</div>
+        <div class="food-chip" data-val="Thai" onclick="toggleFood(this)"><span class="emoji">🍜</span>Thai</div>
+        <div class="food-chip" data-val="French" onclick="toggleFood(this)"><span class="emoji">🥐</span>French</div>
+        <div class="food-chip" data-val="Other" onclick="toggleFood(this)"><span class="emoji">✨</span>Other</div>
+      </div>
+      <input type="text" class="other-input" id="otherFoodInput" placeholder="What else sounds good?" />
+
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="goStep(2)">← Back</button>
+        <button class="btn btn-primary" id="step3Next" disabled onclick="buildResult()">Send the Request 💌</button>
+      </div>
+    </div>
+
+    <!-- STEP 4: RESULT -->
+    <div class="step" id="step4">
+      <div class="result-section">
+        <div class="confetti">🎉💌🌹</div>
+        <h2>Your request is ready!</h2>
+        <p>Click a date below to send Errol a Google Calendar invite.<br>He'll accept or propose something else.</p>
+
+        <div class="summary-box" id="summaryBox"></div>
+
+        <div class="cal-links" id="calLinks"></div>
+
+        <button class="restart-btn" onclick="restart()">Start over</button>
+      </div>
+    </div>
+
+  </div><!-- /body -->
+</div><!-- /card -->
+
+<script>
+// ── STATE ──
+const ERROL_EMAIL = 'elimenta24@gmail.com';
+const TOTAL_STEPS = 3;
+let currentStep = 1;
+let viewYear, viewMonth;
+let selectedDates = []; // [{date: Date, time: '19:00'}]
+let dogAnswer = null;
+let foodChoices = [];
+
+// ── INIT ──
+(function() {
+  // Personalize header from URL params
+  const titleEl = document.getElementById('headerTitle');
+  const subEl   = document.getElementById('headerSub');
+  if (GUEST_NAME && DATE_NUMBER) {
+    titleEl.textContent = `Hello ${GUEST_NAME} 👋`;
+    subEl.textContent   = `Would you like to go on date #${DATE_NUMBER} with Errol?`;
+  } else if (GUEST_NAME) {
+    titleEl.textContent = `Hello ${GUEST_NAME} 👋`;
+    subEl.textContent   = `Would you like to go on a date with Errol?`;
+  } else if (DATE_NUMBER) {
+    titleEl.textContent = `Date #${DATE_NUMBER} with Errol 💌`;
+    subEl.textContent   = `Fill this out and he'll get a calendar invite ✨`;
+  }
+  // Also set page title
+  if (GUEST_NAME || DATE_NUMBER) {
+    const parts = [];
+    if (GUEST_NAME)  parts.push(`Hey ${GUEST_NAME}`);
+    if (DATE_NUMBER) parts.push(`Date #${DATE_NUMBER}`);
+    document.title = parts.join(' · ') + ' · Errol 💌';
+  }
+
+  const now = new Date();
+  viewYear = now.getFullYear();
+  viewMonth = now.getMonth();
+  renderCalendar();
+  updateProgress();
+})();
+
+// ── PROGRESS ──
+function updateProgress() {
+  const pct = (currentStep / TOTAL_STEPS) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+// ── STEP NAV ──
+function goStep(n) {
+  document.getElementById('step' + currentStep).classList.remove('active');
+  currentStep = n;
+  document.getElementById('step' + currentStep).classList.add('active');
+  updateProgress();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+document.getElementById('step1Next').addEventListener('click', () => goStep(2));
+document.getElementById('step2Next').addEventListener('click', () => goStep(3));
+
+// ── CALENDAR ──
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DAYS   = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+
+function renderCalendar() {
+  const now = new Date();
+  now.setHours(0,0,0,0);
+  document.getElementById('calMonth').textContent = MONTHS[viewMonth] + ' ' + viewYear;
+
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML = '';
+
+  // Day names
+  DAYS.forEach(d => {
+    const el = document.createElement('div');
+    el.className = 'cal-day-name';
+    el.textContent = d;
+    grid.appendChild(el);
+  });
+
+  const firstDay = new Date(viewYear, viewMonth, 1).getDay();
+  const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+
+  for (let i = 0; i < firstDay; i++) {
+    const el = document.createElement('div');
+    el.className = 'cal-day empty';
+    grid.appendChild(el);
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const date = new Date(viewYear, viewMonth, d);
+    const el = document.createElement('div');
+    el.className = 'cal-day';
+    el.textContent = d;
+
+    if (date < now) {
+      el.classList.add('past');
+    } else {
+      if (date.toDateString() === now.toDateString()) el.classList.add('today');
+      const idx = selectedDates.findIndex(s => s.date.toDateString() === date.toDateString());
+      if (idx !== -1) {
+        el.classList.add('selected');
+        const badge = document.createElement('div');
+        badge.className = 'badge';
+        badge.textContent = idx + 1;
+        el.appendChild(badge);
+      }
+      el.addEventListener('click', () => toggleDate(date, el));
+    }
+    grid.appendChild(el);
+  }
+}
+
+function toggleDate(date, el) {
+  const idx = selectedDates.findIndex(s => s.date.toDateString() === date.toDateString());
+  if (idx !== -1) {
+    selectedDates.splice(idx, 1);
+  } else {
+    if (selectedDates.length >= 3) return;
+    selectedDates.push({ date, time: '19:00' });
+  }
+  renderCalendar();
+  renderTimeSlots();
+  updateCalHint();
+  document.getElementById('step1Next').disabled = selectedDates.length === 0;
+}
+
+function updateCalHint() {
+  const remaining = 3 - selectedDates.length;
+  const hint = document.getElementById('calHint');
+  if (selectedDates.length === 0) hint.textContent = 'Select up to 3 dates';
+  else if (remaining === 0) hint.textContent = '3 dates selected ✓';
+  else hint.textContent = `${selectedDates.length} selected — you can add ${remaining} more`;
+}
+
+document.getElementById('prevMonth').addEventListener('click', () => {
+  const now = new Date();
+  if (viewYear === now.getFullYear() && viewMonth === now.getMonth()) return;
+  viewMonth--;
+  if (viewMonth < 0) { viewMonth = 11; viewYear--; }
+  renderCalendar();
+});
+document.getElementById('nextMonth').addEventListener('click', () => {
+  viewMonth++;
+  if (viewMonth > 11) { viewMonth = 0; viewYear++; }
+  renderCalendar();
+});
+
+// ── TIME SLOTS ──
+function renderTimeSlots() {
+  const container = document.getElementById('timeSlots');
+  container.innerHTML = '';
+  if (selectedDates.length === 0) return;
+
+  selectedDates.forEach((slot, i) => {
+    const div = document.createElement('div');
+    div.className = 'time-slot-item';
+
+    const label = document.createElement('div');
+    label.className = 'date-label';
+    label.textContent = formatDate(slot.date);
+    div.appendChild(label);
+
+    const sel = document.createElement('select');
+    populateTimes(sel, slot.time);
+    sel.addEventListener('change', () => { selectedDates[i].time = sel.value; });
+    div.appendChild(sel);
+
+    const rmBtn = document.createElement('button');
+    rmBtn.className = 'remove-btn';
+    rmBtn.textContent = '✕';
+    rmBtn.title = 'Remove';
+    rmBtn.addEventListener('click', () => {
+      selectedDates.splice(i, 1);
+      renderCalendar();
+      renderTimeSlots();
+      updateCalHint();
+      document.getElementById('step1Next').disabled = selectedDates.length === 0;
+    });
+    div.appendChild(rmBtn);
+
+    container.appendChild(div);
+  });
+}
+
+function populateTimes(sel, currentVal) {
+  const hours = [];
+  for (let h = 9; h <= 22; h++) {
+    ['00','30'].forEach(m => {
+      const val = pad(h) + ':' + m;
+      const opt = document.createElement('option');
+      opt.value = val;
+      opt.textContent = formatTime(h, m);
+      if (val === currentVal) opt.selected = true;
+      sel.appendChild(opt);
+    });
+  }
+}
+
+function formatTime(h, m) {
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  const h12 = h % 12 === 0 ? 12 : h % 12;
+  return h12 + ':' + m + ' ' + ampm;
+}
+
+function formatDate(d) {
+  return d.toLocaleDateString('en-US', { weekday: 'short', month: 'long', day: 'numeric' });
+}
+
+function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+// ── DOG ──
+function selectDog(el) {
+  document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  dogAnswer = el.dataset.val;
+  document.getElementById('step2Next').disabled = false;
+}
+
+// ── FOOD ──
+function toggleFood(el) {
+  const val = el.dataset.val;
+  if (el.classList.contains('selected')) {
+    el.classList.remove('selected');
+    foodChoices = foodChoices.filter(f => f !== val);
+  } else {
+    el.classList.add('selected');
+    foodChoices.push(val);
+  }
+  const otherInput = document.getElementById('otherFoodInput');
+  if (foodChoices.includes('Other')) {
+    otherInput.classList.add('visible');
+  } else {
+    otherInput.classList.remove('visible');
+    otherInput.value = '';
+  }
+  document.getElementById('step3Next').disabled = foodChoices.length === 0;
+}
+
+// ── RESULT ──
+function buildResult() {
+  goStep(4);
+
+  const otherText = document.getElementById('otherFoodInput').value.trim();
+  const foods = foodChoices.map(f => f === 'Other' && otherText ? otherText : f);
+  const dogText = dogAnswer === 'yes' ? 'Yes, bring the pup! 🐶' : 'Just you two 🥂';
+
+  // Summary box
+  const box = document.getElementById('summaryBox');
+  box.innerHTML = `
+    <div class="summary-row"><span class="summary-icon">📅</span><span><strong>Proposed dates:</strong><br>${selectedDates.map((s,i) => `Option ${i+1}: ${formatDate(s.date)} at ${formatTimePretty(s.time)}`).join('<br>')}</span></div>
+    <div class="summary-row" style="margin-top:10px"><span class="summary-icon">🐾</span><span><strong>Dog?</strong> ${dogText}</span></div>
+    <div class="summary-row" style="margin-top:10px"><span class="summary-icon">🍽️</span><span><strong>Food vibes:</strong> ${foods.join(', ')}</span></div>
+  `;
+
+  // Calendar links
+  const linksContainer = document.getElementById('calLinks');
+  linksContainer.innerHTML = '';
+
+  selectedDates.forEach((slot, i) => {
+    const details = buildDetails(slot, dogText, foods);
+    const gcUrl = buildGCalUrl(slot, details);
+    const a = document.createElement('a');
+    a.href = gcUrl;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.className = 'cal-link-btn';
+    a.innerHTML = `<span class="option-num">Option ${i+1}</span>${formatDate(slot.date)} · ${formatTimePretty(slot.time)}`;
+    linksContainer.appendChild(a);
+  });
+}
+
+function formatTimePretty(t) {
+  const [h, m] = t.split(':').map(Number);
+  return formatTime(h, pad(m));
+}
+
+function buildDetails(slot, dog, foods) {
+  const from = GUEST_NAME ? `from ${GUEST_NAME}` : '';
+  const dateRef = DATE_NUMBER ? ` #${DATE_NUMBER}` : '';
+  return `Hi Errol! 💌\n\nDate request${dateRef}${from ? ' ' + from : ''}.\n\n🍽️ Food I'm thinking: ${foods.join(', ')}\n🐾 Dog: ${dog}\n\nLet me know if this works for you! 🌹`;
+}
+
+function buildGCalUrl(slot, details) {
+  // Build start and end datetime strings (local time, YYYYMMDDTHHMMSS)
+  const d = slot.date;
+  const [startH, startM] = slot.time.split(':').map(Number);
+  const endH = startH + 2; // 2-hour date
+
+  const startStr = [
+    d.getFullYear(),
+    pad(d.getMonth() + 1),
+    pad(d.getDate()),
+    'T',
+    pad(startH),
+    pad(startM),
+    '00'
+  ].join('');
+
+  const endStr = [
+    d.getFullYear(),
+    pad(d.getMonth() + 1),
+    pad(d.getDate()),
+    'T',
+    pad(endH),
+    pad(startM),
+    '00'
+  ].join('');
+
+  const params = new URLSearchParams({
+    action: 'TEMPLATE',
+    text: DATE_NUMBER ? `💌 Date #${DATE_NUMBER} with Errol` : '💌 Date with Errol',
+    dates: startStr + '/' + endStr,
+    details: details,
+    add: ERROL_EMAIL,
+  });
+
+  return 'https://calendar.google.com/calendar/render?' + params.toString();
+}
+
+// ── RESTART ──
+function restart() {
+  selectedDates = [];
+  dogAnswer = null;
+  foodChoices = [];
+  document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+  document.querySelectorAll('.food-chip').forEach(c => c.classList.remove('selected'));
+  document.getElementById('otherFoodInput').classList.remove('visible');
+  document.getElementById('otherFoodInput').value = '';
+  document.getElementById('step2Next').disabled = true;
+  document.getElementById('step3Next').disabled = true;
+  document.getElementById('step1Next').disabled = true;
+  renderCalendar();
+  renderTimeSlots();
+  updateCalHint();
+
+  const now = new Date();
+  viewYear = now.getFullYear();
+  viewMonth = now.getMonth();
+  renderCalendar();
+
+  goStep(1);
+}
+</script>
+</body>
+</html>
