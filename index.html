@@ -916,13 +916,36 @@ function buildResult() {
   selectedDates.forEach((slot, i) => {
     const details = buildDetails(slot, dogText, foods, placesText);
     const gcUrl = buildGCalUrl(slot, details);
-    const a = document.createElement('a');
-    a.href = gcUrl;
-    a.target = '_blank';
-    a.rel = 'noopener noreferrer';
-    a.className = 'cal-link-btn';
-    a.innerHTML = `<span class="option-num">Option ${i+1}</span>${formatDate(slot.date)} · ${formatTimePretty(slot.time)}`;
-    linksContainer.appendChild(a);
+
+    const wrapper = document.createElement('div');
+    wrapper.style.cssText = 'margin-bottom:12px;';
+
+    const label = document.createElement('div');
+    label.style.cssText = 'font-size:.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-mute);margin-bottom:6px;';
+    label.textContent = 'Option ' + (i + 1) + ': ' + formatDate(slot.date) + ' · ' + formatTimePretty(slot.time);
+    wrapper.appendChild(label);
+
+    const btnRow = document.createElement('div');
+    btnRow.style.cssText = 'display:flex;gap:8px;';
+
+    const gcBtn = document.createElement('a');
+    gcBtn.href = gcUrl;
+    gcBtn.target = '_blank';
+    gcBtn.rel = 'noopener noreferrer';
+    gcBtn.className = 'cal-link-btn';
+    gcBtn.style.cssText = 'flex:1;font-size:.85rem;padding:12px 16px;';
+    gcBtn.textContent = 'Google Calendar';
+    btnRow.appendChild(gcBtn);
+
+    const icsBtn = document.createElement('button');
+    icsBtn.className = 'cal-link-btn';
+    icsBtn.style.cssText = 'flex:1;font-size:.85rem;padding:12px 16px;border:none;cursor:pointer;font-family:inherit;';
+    icsBtn.textContent = 'Download .ics';
+    icsBtn.addEventListener('click', () => downloadICS(slot, details, i));
+    btnRow.appendChild(icsBtn);
+
+    wrapper.appendChild(btnRow);
+    linksContainer.appendChild(wrapper);
   });
 }
 
@@ -972,6 +995,46 @@ function buildGCalUrl(slot, details) {
   });
 
   return 'https://calendar.google.com/calendar/render?' + params.toString();
+}
+
+function buildICS(slot, details) {
+  const d = slot.date;
+  const [startH, startM] = slot.time.split(':').map(Number);
+  const endH = startH + 2;
+  const ts = (h, m) => [d.getFullYear(), pad(d.getMonth()+1), pad(d.getDate()), 'T', pad(h), pad(m), '00'].join('');
+  const now = new Date();
+  const stamp = [now.getUTCFullYear(), pad(now.getUTCMonth()+1), pad(now.getUTCDate()), 'T', pad(now.getUTCHours()), pad(now.getUTCMinutes()), pad(now.getUTCSeconds()), 'Z'].join('');
+  const title = DATE_NUMBER ? `Date #${DATE_NUMBER} with Errol` : 'Date with Errol';
+  const icsDetails = details.replace(/\n/g, '\\n');
+  const ics = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//DateRequest//EN',
+    'BEGIN:VEVENT',
+    'DTSTART:' + ts(startH, startM),
+    'DTEND:' + ts(endH, startM),
+    'DTSTAMP:' + stamp,
+    'UID:' + stamp + '-' + Math.random().toString(36).slice(2) + '@daterequest',
+    'SUMMARY:' + title,
+    'DESCRIPTION:' + icsDetails,
+    'ATTENDEE;RSVP=TRUE:mailto:' + ERROL_EMAIL,
+    'END:VEVENT',
+    'END:VCALENDAR'
+  ].join('\r\n');
+  return ics;
+}
+
+function downloadICS(slot, details, i) {
+  const ics = buildICS(slot, details);
+  const blob = new Blob([ics], {type: 'text/calendar;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'date-with-errol-option-' + (i+1) + '.ics';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
 // ── RESTART ──
